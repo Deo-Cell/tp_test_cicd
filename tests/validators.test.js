@@ -2,94 +2,201 @@ const { isValidEmail, isValidPassword, isValidAge } = require('../src/validators
 
 describe('isValidEmail', () => {
   test('should return true when given a standard email', () => {
-    expect(isValidEmail('user@example.com')).toBe(true);
+    // Arrange
+    const email = 'user@example.com';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(true);
   });
   test('should return true when given email with tags and subdomains', () => {
-    expect(isValidEmail('user.name+tag@domain.co')).toBe(true);
+    // Arrange
+    const email = 'user.name+tag@domain.co';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(true);
   });
   test('should return false when given text without @ and .', () => {
-    expect(isValidEmail('invalid')).toBe(false);
+    // Arrange
+    const email = 'invalid';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false when missing username', () => {
-    expect(isValidEmail('@domain.com')).toBe(false);
+    // Arrange
+    const email = '@domain.com';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false when missing domain', () => {
-    expect(isValidEmail('user@')).toBe(false);
+    // Arrange
+    const email = 'user@';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false when given empty string', () => {
-    expect(isValidEmail('')).toBe(false);
+    // Arrange
+    const email = '';
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false when given null', () => {
-    expect(isValidEmail(null)).toBe(false);
+    // Arrange
+    const email = null;
+    // Act
+    const result = isValidEmail(email);
+    // Assert
+    expect(result).toBe(false);
   });
 });
 
 describe('isValidPassword', () => {
   test('should return valid true when given strong password', () => {
-    const result = isValidPassword('Passw0rd!');
+    // Arrange
+    const password = 'Passw0rd!';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(true);
     expect(result.errors).toEqual([]);
   });
   test('should return false with multiple errors when password is too short and missing requirements', () => {
-    const result = isValidPassword('short');
+    // Arrange
+    const password = 'short';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(0);
     expect(result.errors).toContain('Password must be at least 8 characters long');
   });
   test('should return false when uppercase missing', () => {
-    const result = isValidPassword('alllowercase1!');
+    // Arrange
+    const password = 'alllowercase1!';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Password must contain at least one uppercase letter');
   });
   test('should return false when lowercase missing', () => {
-    const result = isValidPassword('ALLUPPERCASE1!');
+    // Arrange
+    const password = 'ALLUPPERCASE1!';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Password must contain at least one lowercase letter');
   });
   test('should return false when numbers missing', () => {
-    const result = isValidPassword('NoDigits!here');
+    // Arrange
+    const password = 'NoDigits!here';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Password must contain at least one number');
   });
   test('should return false when special char missing', () => {
-    const result = isValidPassword('NoSpecial1here');
+    // Arrange
+    const password = 'NoSpecial1here';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Password must contain at least one special character (!@#$%^&*)');
   });
   test('should return false when string is empty', () => {
-    const result = isValidPassword('');
+    // Arrange
+    const password = '';
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('Password must be a string');
   });
   test('should return false when value is null', () => {
-    const result = isValidPassword(null);
+    // Arrange
+    const password = null;
+    // Act
+    const result = isValidPassword(password);
+    // Assert
     expect(result.valid).toBe(false);
   });
 });
 
 describe('isValidAge', () => {
   test('should return true for normal adult age', () => {
-    expect(isValidAge(25)).toBe(true);
+    // Arrange
+    const age = 25;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(true);
   });
   test('should return true for age 0', () => {
-    expect(isValidAge(0)).toBe(true);
+    // Arrange
+    const age = 0;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(true);
   });
   test('should return true for maximum age', () => {
-    expect(isValidAge(150)).toBe(true);
+    // Arrange
+    const age = 150;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(true);
   });
   test('should return false for negative age', () => {
-    expect(isValidAge(-1)).toBe(false);
+    // Arrange
+    const age = -1;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false for age above 150', () => {
-    expect(isValidAge(151)).toBe(false);
+    // Arrange
+    const age = 151;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false for floats', () => {
-    expect(isValidAge(25.5)).toBe(false);
+    // Arrange
+    const age = 25.5;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false for string representations', () => {
-    expect(isValidAge('25')).toBe(false);
+    // Arrange
+    const age = '25';
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(false);
   });
   test('should return false for null', () => {
-    expect(isValidAge(null)).toBe(false);
+    // Arrange
+    const age = null;
+    // Act
+    const result = isValidAge(age);
+    // Assert
+    expect(result).toBe(false);
   });
 });
