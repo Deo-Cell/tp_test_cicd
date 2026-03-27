@@ -50,7 +50,37 @@ function applyPromoCode(subtotal, promoCode, promoCodes) {
   return Math.max(0, subtotal - discount);
 }
 
+function calculateSurge(hour, dayOfWeek) {
+  if (hour < 10 || hour >= 23) {
+    throw new Error('Restaurant is closed');
+  }
+
+  const day = dayOfWeek.toLowerCase();
+  let surge = 1.0;
+
+  if (day === 'sunday') {
+    surge = 1.2;
+  }
+
+  // Déjeuner : 11h30 (11.5) à 14h00 (non-inclus, donc 14h = fin)
+  if (hour >= 11.5 && hour < 14) {
+    surge = Math.max(surge, 1.3);
+  }
+
+  // Dîner : 19h00 à 22h00
+  if (hour >= 19 && hour <= 22) {
+    if (day === 'friday' || day === 'saturday') {
+      surge = Math.max(surge, 1.8);
+    } else {
+      surge = Math.max(surge, 1.5);
+    }
+  }
+
+  return surge;
+}
+
 module.exports = {
   calculateDeliveryFee,
-  applyPromoCode
+  applyPromoCode,
+  calculateSurge
 };

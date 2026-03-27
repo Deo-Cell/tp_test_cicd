@@ -1,4 +1,4 @@
-const { calculateDeliveryFee, applyPromoCode } = require('../src/pricing');
+const { calculateDeliveryFee, applyPromoCode, calculateSurge } = require('../src/pricing');
 
 describe('calculateDeliveryFee', () => {
   test('should return base fee for short distance and low weight', () => {
@@ -161,5 +161,39 @@ describe('applyPromoCode', () => {
 
   test('should apply discount even if subtotal is 0 given 0 minOrder', () => {
     expect(applyPromoCode(0, 'FIXED10', promoCodes)).toBe(0);
+  });
+});
+
+describe('calculateSurge', () => {
+  test('should return 1.0 for normal hours (Mardi 15h)', () => {
+    // Arrange & Act & Assert
+    expect(calculateSurge(15, 'tuesday')).toBe(1.0);
+  });
+  test('should return 1.3 for lunch time (Mercredi 12h30)', () => {
+    expect(calculateSurge(12.5, 'wednesday')).toBe(1.3);
+  });
+  test('should return 1.5 for normal dinner (Jeudi 20h)', () => {
+    expect(calculateSurge(20, 'thursday')).toBe(1.5);
+  });
+  test('should return 1.8 for weekend dinner (Vendredi 21h)', () => {
+    expect(calculateSurge(21, 'friday')).toBe(1.8);
+  });
+  test('should return 1.2 for sunday non-peak hours (Dimanche 14h)', () => {
+    expect(calculateSurge(14, 'sunday')).toBe(1.2);
+  });
+  test('should return 1.3 for lunch exact start (11.5)', () => {
+    expect(calculateSurge(11.5, 'tuesday')).toBe(1.3);
+  });
+  test('should return 1.5 for dinner exact start (19h)', () => {
+    expect(calculateSurge(19, 'tuesday')).toBe(1.5);
+  });
+  test('should throw error for exact close time (23h)', () => {
+    expect(() => calculateSurge(23, 'monday')).toThrow('Restaurant is closed');
+  });
+  test('should throw error for early morning before open (9h59)', () => {
+    expect(() => calculateSurge(9.99, 'monday')).toThrow('Restaurant is closed');
+  });
+  test('should return 1.0 for exactly open time (10h)', () => {
+    expect(calculateSurge(10, 'monday')).toBe(1.0);
   });
 });
