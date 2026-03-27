@@ -1,4 +1,4 @@
-const { calculateDeliveryFee, applyPromoCode, calculateSurge } = require('../src/pricing');
+const { calculateDeliveryFee, applyPromoCode, calculateSurge, calculateOrderTotal } = require('../src/pricing');
 
 describe('calculateDeliveryFee', () => {
   test('should return base fee for short distance and low weight', () => {
@@ -195,5 +195,82 @@ describe('calculateSurge', () => {
   });
   test('should return 1.0 for exactly open time (10h)', () => {
     expect(calculateSurge(10, 'monday')).toBe(1.0);
+  });
+});
+
+describe('calculateOrderTotal', () => {
+  const items = [{ name: "Pizza", price: 12.50, quantity: 2 }];
+
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2025-05-15T12:00:00Z'));
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  test('should process normal complete scenario', () => {
+    const result = calculateOrderTotal(items, 5, 2, null, 15, 'tuesday');
+    expect(result.subtotal).toBe(25.00);
+    expect(result.discount).toBe(0);
+    expect(result.deliveryFee).toBe(3.00);
+    expect(result.surge).toBe(1.0);
+    expect(result.total).toBe(28.00);
+  });
+
+  test('should process scenario with promo code', () => {
+    const result = calculateOrderTotal(items, 5, 2, 'BIENVENUE20', 15, 'tuesday');
+    expect(result.subtotal).toBe(25.00);
+    expect(result.discount).toBe(5.00);
+    expect(result.deliveryFee).toBe(3.00);
+    expect(result.surge).toBe(1.0);
+    expect(result.total).toBe(23.00);
+  });
+
+  test('should process scenario with surge pricing (vendredi 20h)', () => {
+    const result = calculateOrderTotal(items, 5, 2, null, 20, 'friday');
+    expect(result.subtotal).toBe(25.00);
+    expect(result.discount).toBe(0);
+    expect(result.deliveryFee).toBe(5.40); // 3 * 1.8
+    expect(result.surge).toBe(1.8);
+    expect(result.total).toBe(30.40);
+  });
+
+  test('should throw error for empty cart', () => {
+    expect(() => calculateOrderTotal([], 5, 2, null, 15, 'tuesday')).toThrow('Cart is empty');
+  });
+
+  test('should ignore items with quantity 0', () => {
+    const mixedItems = [{ name: 'Pizza', price: 12.5, quantity: 2 }, { name: 'Coke', price: 2, quantity: 0 }];
+    const result = calculateOrderTotal(mixedItems, 5, 2, null, 15, 'tuesday');
+    expect(result.subtotal).toBe(25.00);
+  });
+
+  test('should throw error if item price is negative', () => {
+    const badItems = [{ name: 'Pizza', price: -5, quantity: 1 }];
+    expect(() => calculateOrderTotal(badItems, 5, 2, null, 15, 'tuesday')).toThrow('Item price cannot be negative');
+  });
+
+  test('should throw error when ordering at closed hours', () => {
+    expect(() => calculateOrderTotal(items, 5, 2, null, 23, 'tuesday')).toThrow('Restaurant is closed');
+  });
+
+  test('should throw error when distance is outside zone', () => {
+    expect(() => calculateOrderTotal(items, 15, 2, null, 15, 'tuesday')).toThrow('Delivery outside of zone');
+  });
+
+  test('should guarantee structure contains expected keys', () => {
+    const result = calculateOrderTotal(items, 5, 2, null, 15, 'tuesday');
+    expect(result).toHaveProperty('subtotal');
+    expect(result).toHaveProperty('discount');
+    expect(result).toHaveProperty('deliveryFee');
+    expect(result).toHaveProperty('surge');
+    expect(result).toHaveProperty('total');
+  });
+
+  test('should combine surge and promo correctly', () => {
+    const result = calculateOrderTotal(items, 5, 2, 'BIENVENUE20', 20, 'friday');
+    expect(result.total).toBe(25.40); // (25 - 5) = 20 + 5.40
   });
 });

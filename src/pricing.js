@@ -1,3 +1,8 @@
+const globalPromoCodes = [
+  { code: 'BIENVENUE20', type: 'percentage', value: 20, minOrder: 15.00, expiresAt: '2026-12-31' },
+  { code: 'MINUS5', type: 'fixed', value: 5, minOrder: 20.00, expiresAt: '2026-12-31' }
+];
+
 function calculateDeliveryFee(distance, weight) {
   if (distance < 0 || weight < 0) {
     throw new Error('Distance and weight must be positive');
@@ -79,8 +84,44 @@ function calculateSurge(hour, dayOfWeek) {
   return surge;
 }
 
+function calculateOrderTotal(items, distance, weight, promoCode, hour, dayOfWeek) {
+  if (!items || items.length === 0) throw new Error('Cart is empty');
+  
+  let subtotal = 0;
+  for (const item of items) {
+    if (item.price < 0) throw new Error('Item price cannot be negative');
+    if (item.quantity > 0) {
+      subtotal += item.price * item.quantity;
+    }
+  }
+
+  subtotal = Math.round(subtotal * 100) / 100;
+
+  let discount = 0;
+  if (promoCode) {
+    const discountedTotal = applyPromoCode(subtotal, promoCode, globalPromoCodes);
+    discount = subtotal - discountedTotal;
+  }
+
+  const baseDeliveryFee = calculateDeliveryFee(distance, weight);
+  const surge = calculateSurge(hour, dayOfWeek);
+
+  const finalDeliveryFee = Math.round((baseDeliveryFee * surge) * 100) / 100;
+  const total = Math.round((subtotal - discount + finalDeliveryFee) * 100) / 100;
+
+  return {
+    subtotal: subtotal,
+    discount: Math.round(discount * 100) / 100,
+    deliveryFee: finalDeliveryFee,
+    surge: surge,
+    total: total
+  };
+}
+
 module.exports = {
   calculateDeliveryFee,
   applyPromoCode,
-  calculateSurge
+  calculateSurge,
+  calculateOrderTotal,
+  globalPromoCodes
 };
