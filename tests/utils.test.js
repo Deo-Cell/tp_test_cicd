@@ -2,61 +2,149 @@ const { capitalize, calculateAverage, slugify, sortStudents, clamp } = require('
 
 describe('capitalize', () => {
   test('should return capitalized string when given lowercase', () => {
-    expect(capitalize('hello')).toBe('Hello');
+    // Arrange
+    const input = 'hello';
+    // Act
+    const result = capitalize(input);
+    // Assert
+    expect(result).toBe('Hello');
   });
   test('should return capitalized string when given uppercase', () => {
-    expect(capitalize('HELLO')).toBe('Hello');
+    // Arrange
+    const input = 'HELLO';
+    // Act
+    const result = capitalize(input);
+    // Assert
+    expect(result).toBe('Hello');
   });
   test('should return empty string when given null', () => {
-    expect(capitalize(null)).toBe('');
+    // Arrange
+    const input = null;
+    // Act
+    const result = capitalize(input);
+    // Assert
+    expect(result).toBe('');
   });
   test('should return same single character capitalized when given single letter', () => {
-    expect(capitalize('a')).toBe('A');
+    // Arrange
+    const input = 'a';
+    // Act
+    const result = capitalize(input);
+    // Assert
+    expect(result).toBe('A');
   });
 });
 
 describe('calculateAverage', () => {
-  test('should return the average of grades', () => {
-    expect(calculateAverage([10, 12, 14, 16])).toBe(13);
+  test('should return the average when given an array of numbers', () => {
+    // Arrange
+    const input = [10, 12, 14, 16];
+    // Act
+    const result = calculateAverage(input);
+    // Assert
+    expect(result).toBe(13);
   });
-  test('should return 0 for an empty array', () => {
-    expect(calculateAverage([])).toBe(0);
+  test('should return 0 when given an empty array', () => {
+    // Arrange
+    const input = [];
+    // Act
+    const result = calculateAverage(input);
+    // Assert
+    expect(result).toBe(0);
   });
-  test('should return 0 for null input', () => {
-    expect(calculateAverage(null)).toBe(0);
+  test('should return 0 when given null', () => {
+    // Arrange
+    const input = null;
+    // Act
+    const result = calculateAverage(input);
+    // Assert
+    expect(result).toBe(0);
   });
-  test('should round to 2 decimal places', () => {
-    expect(calculateAverage([10, 11, 12.333])).toBe(11.11);
+  test('should return rounded average when given numbers with many decimals', () => {
+    // Arrange
+    const input = [10, 11, 12.333];
+    // Act
+    const result = calculateAverage(input);
+    // Assert
+    expect(result).toBe(11.11);
   });
 });
 
 describe('slugify', () => {
   test('should return slugified string when given normal text', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
+    // Arrange
+    const input = 'Hello World';
+    // Act
+    const result = slugify(input);
+    // Assert
+    expect(result).toBe('hello-world');
   });
   test('should return slugified string when given special characters', () => {
-    expect(slugify('Hello @World!')).toBe('hello-world');
+    // Arrange
+    const input = 'Hello @World!';
+    // Act
+    const result = slugify(input);
+    // Assert
+    expect(result).toBe('hello-world');
   });
   test('should return empty string when given null', () => {
-    expect(slugify(null)).toBe('');
+    // Arrange
+    const input = null;
+    // Act
+    const result = slugify(input);
+    // Assert
+    expect(result).toBe('');
   });
-  test('should replace multiple spaces and hyphens with single hyphen', () => {
-    expect(slugify('hello   world---test')).toBe('hello-world-test');
+  test('should return slugified string replacing multiple spaces when given messy string', () => {
+    // Arrange
+    const input = 'hello   world---test';
+    // Act
+    const result = slugify(input);
+    // Assert
+    expect(result).toBe('hello-world-test');
   });
 });
 
 describe('clamp', () => {
   test('should return value when value is between min and max', () => {
-    expect(clamp(5, 1, 10)).toBe(5);
+    // Arrange
+    const value = 5;
+    const min = 1;
+    const max = 10;
+    // Act
+    const result = clamp(value, min, max);
+    // Assert
+    expect(result).toBe(5);
   });
   test('should return min when value is below min', () => {
-    expect(clamp(0, 1, 10)).toBe(1);
+    // Arrange
+    const value = 0;
+    const min = 1;
+    const max = 10;
+    // Act
+    const result = clamp(value, min, max);
+    // Assert
+    expect(result).toBe(1);
   });
   test('should return max when value is above max', () => {
-    expect(clamp(15, 1, 10)).toBe(10);
+    // Arrange
+    const value = 15;
+    const min = 1;
+    const max = 10;
+    // Act
+    const result = clamp(value, min, max);
+    // Assert
+    expect(result).toBe(10);
   });
-  test('should return 0 when inputs are invalid', () => {
-    expect(clamp(null, 1, 10)).toBe(0);
+  test('should return 0 when inputs are null or invalid', () => {
+    // Arrange
+    const value = null;
+    const min = 1;
+    const max = 10;
+    // Act
+    const result = clamp(value, min, max);
+    // Assert
+    expect(result).toBe(0);
   });
 });
 
