@@ -1,0 +1,29 @@
+{
+  "name": "tp_test_cicd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deo-Cell/tp_test_cicd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Deo-Cell/tp_test_cicd/issues"
+  },
+  "homepage": "https://github.com/Deo-Cell/tp_test_cicd#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
+    "jest": "^30.3.0"
+  }
+}
