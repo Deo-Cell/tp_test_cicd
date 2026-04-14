@@ -192,4 +192,14 @@ describe('sortStudents', () => {
     const sortedAsc = sortStudents(students, 'grade', 'asc');
     expect(sortedDef).toEqual(sortedAsc);
   });
+
+  test('should return 0 when values are identical', () => {
+    const studentsWithSameGrade = [
+      { name: 'Alice', grade: 15 },
+      { name: 'Bob', grade: 15 }
+    ];
+    const result = sortStudents(studentsWithSameGrade, 'grade', 'asc');
+    expect(result[0].grade).toBe(15);
+    expect(result[1].grade).toBe(15);
+  });
 });

@@ -162,6 +162,11 @@ describe('applyPromoCode', () => {
   test('should apply discount even if subtotal is 0 given 0 minOrder', () => {
     expect(applyPromoCode(0, 'FIXED10', promoCodes)).toBe(0);
   });
+
+  test('should return subtotal unchanged if promo type is unknown', () => {
+    const unknownTypeCodes = [{ code: 'UNKNOWN', type: 'weird', value: 10, minOrder: 0, expiresAt: '2026-12-31' }];
+    expect(applyPromoCode(50, 'UNKNOWN', unknownTypeCodes)).toBe(50);
+  });
 });
 
 describe('calculateSurge', () => {
